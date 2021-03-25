@@ -1,41 +1,54 @@
 import * as React from 'react';
 
-import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
-import SocialAuth from 'social-auth';
+import { StyleSheet, View, Text, Platform } from 'react-native';
+import { AppleButton, Config, FacebookButton, GoogleButton } from 'social-auth';
+
+
+if (Platform.OS == "android") {
+    Config.googleClientID = "539083112611-var842hv7fn4sj8q92suirkrrm7nhl5f.apps.googleusercontent.com"
+} else {
+    Config.googleClientID = "641945122723-6oqbto3q4hfuedpksehpk9hjvik3ieil.apps.googleusercontent.com"
+}
+Config.facebookAppID = "788977271724922"
+
+
 
 export default function App() {
   const [result, setResult] = React.useState<string | null>();
 
-  const googleSignIn = () => {
-    SocialAuth.googleSignIn("", (value) => {
-      setResult(value)
-    });
+  const signInResponse = (response: any) => {
+      setResult(response)
   }
 
-  const facebookSignIn = () => {
-    SocialAuth.facebookSignIn((value) => {
-      setResult(value)
-    })
-  }
+  const appleSignInButton= () => {
 
+    if (Platform.OS == "android") {
+        return null
+    } else {
+        return(
+            <View>
+
+                <View style={{height: 24}} />
+
+                <AppleButton signInCallback={signInResponse} />
+            </View>
+        )
+    }
+  }
   return (
     <View style={styles.container} >
 
-    <TouchableOpacity onPress={googleSignIn}>
-      <View style={{width: 200, height: 50, backgroundColor: "#4579DE", elevation: 3, alignItems: "center", justifyContent: "center"}}>
-        <Text style={{color: "white"}}>Google</Text>
-      </View>
-    </TouchableOpacity>
+    <GoogleButton signInCallback={signInResponse} style={{ backgroundColor:"red" }}/>
 
     <View style={{height: 24}} />
 
-  <TouchableOpacity onPress={facebookSignIn}>
-    <View style={{width: 200, height: 50, backgroundColor: "#4579DE", elevation: 3, alignItems: "center", justifyContent: "center"}}>
-      <Text style={{color: "white"}}>Facebook</Text>
-    </View>
-  </TouchableOpacity>
+    <FacebookButton signInCallback={signInResponse} />
 
-      <Text>Result: {result}</Text>
+    { appleSignInButton() }
+
+    <View style={{height: 24}} />
+
+    <Text>Result: {result}</Text>
     </View>
   );
 }

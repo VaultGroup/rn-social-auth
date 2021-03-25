@@ -2,16 +2,14 @@
 
 @import GoogleSignIn;
 @import FBSDKLoginKit;
+@import AuthenticationServices;
 
 @interface RCT_EXTERN_MODULE(SocialAuth, NSObject)
 
-RCT_EXTERN_METHOD(multiply:(float)a withB:(float)b
-                 withResolver:(RCTPromiseResolveBlock)resolve
-                 withRejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(googleSignIn:(NSString)clientID withResolver:(RCTResponseSenderBlock)resolve)
 
-RCT_EXTERN_METHOD(googleSignIn:(NSString)username
-                 withResolver:(RCTResponseSenderBlock)resolve)
+RCT_EXTERN_METHOD(facebookSignIn:(NSString)appID withResolver:(RCTResponseSenderBlock)resolve)
 
-RCT_EXTERN_METHOD(facebookSignIn:(RCTResponseSenderBlock)resolve)
+RCT_EXTERN_METHOD(appleSignIn:(RCTResponseSenderBlock)resolve)
 
 @end

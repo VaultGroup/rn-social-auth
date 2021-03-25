@@ -17,7 +17,8 @@
 		2DCD954D1E0B4F2C00145EB5 /* SocialAuthExampleTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* SocialAuthExampleTests.m */; };
 		4C39C56BAD484C67AA576FFA /* libPods-SocialAuthExample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CA3E69C5B9553B26FBA2DF04 /* libPods-SocialAuthExample.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
-		8272B868260C3950000CD3E7 /* Testing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8272B867260C3950000CD3E7 /* Testing.swift */; };
+		8272B8F2260C68F4000CD3E7 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ED297162215061F000B7C4FE /* JavaScriptCore.framework */; };
+		8272B91C260C6A31000CD3E7 /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8272B91B260C6A31000CD3E7 /* File.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -52,8 +53,9 @@
 		2D02E4901E0B4A5D006451C7 /* SocialAuthExample-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "SocialAuthExample-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		47F7ED3B7971BE374F7B8635 /* Pods-SocialAuthExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SocialAuthExample.debug.xcconfig"; path = "Target Support Files/Pods-SocialAuthExample/Pods-SocialAuthExample.debug.xcconfig"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = SocialAuthExample/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		8272B866260C394F000CD3E7 /* SocialAuthExample-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SocialAuthExample-Bridging-Header.h"; sourceTree = "<group>"; };
-		8272B867260C3950000CD3E7 /* Testing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Testing.swift; sourceTree = "<group>"; };
+		8272B89D260C6184000CD3E7 /* SocialAuthExample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = SocialAuthExample.entitlements; path = SocialAuthExample/SocialAuthExample.entitlements; sourceTree = "<group>"; };
+		8272B91A260C6A31000CD3E7 /* SocialAuthExample-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SocialAuthExample-Bridging-Header.h"; sourceTree = "<group>"; };
+		8272B91B260C6A31000CD3E7 /* File.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
 		CA3E69C5B9553B26FBA2DF04 /* libPods-SocialAuthExample.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SocialAuthExample.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E00ACF0FDA8BF921659E2F9A /* Pods-SocialAuthExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SocialAuthExample.release.xcconfig"; path = "Target Support Files/Pods-SocialAuthExample/Pods-SocialAuthExample.release.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
@@ -72,6 +74,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8272B8F2260C68F4000CD3E7 /* JavaScriptCore.framework in Frameworks */,
 				4C39C56BAD484C67AA576FFA /* libPods-SocialAuthExample.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -113,15 +116,16 @@
 		13B07FAE1A68108700A75B9A /* SocialAuthExample */ = {
 			isa = PBXGroup;
 			children = (
+				8272B89D260C6184000CD3E7 /* SocialAuthExample.entitlements */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
+				8272B91B260C6A31000CD3E7 /* File.swift */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
-				8272B867260C3950000CD3E7 /* Testing.swift */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				13B07FB71A68108700A75B9A /* main.m */,
-				8272B866260C394F000CD3E7 /* SocialAuthExample-Bridging-Header.h */,
+				8272B91A260C6A31000CD3E7 /* SocialAuthExample-Bridging-Header.h */,
 			);
 			name = SocialAuthExample;
 			sourceTree = "<group>";
@@ -465,8 +469,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8272B868260C3950000CD3E7 /* Testing.swift in Sources */,
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
+				8272B91C260C6A31000CD3E7 /* File.swift in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -553,6 +557,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = SocialAuthExample/SocialAuthExample.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 2K4NWPJKP9;
 				ENABLE_BITCODE = NO;
@@ -578,6 +583,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = SocialAuthExample/SocialAuthExample.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 2K4NWPJKP9;
 				INFOPLIST_FILE = SocialAuthExample/Info.plist;

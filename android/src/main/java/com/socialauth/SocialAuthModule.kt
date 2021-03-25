@@ -29,15 +29,18 @@ class SocialAuthModule(val reactContext: ReactApplicationContext) : ReactContext
     return "SocialAuth"
   }
 
-  fun defaultGoogleSignInOptions() = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-    .requestIdToken("539083112611-var842hv7fn4sj8q92suirkrrm7nhl5f.apps.googleusercontent.com")
-    .requestEmail()
-    .build()
+  lateinit var googleSignInOptions: GoogleSignInOptions
 
   @ReactMethod
-  fun googleSignIn(username: String, resolve: Callback) {
+  fun googleSignIn(clientID: String, resolve: Callback) {
     this.resolver = resolve
-    val intent = GoogleSignIn.getClient(reactContext, defaultGoogleSignInOptions()).signInIntent
+
+    googleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+      .requestIdToken(clientID)
+      .requestEmail()
+      .build()
+
+    val intent = GoogleSignIn.getClient(reactContext, googleSignInOptions).signInIntent
     currentActivity?.startActivityForResult(intent, RC_GOOGLE_SIGN_IN)
   }
 
@@ -55,7 +58,7 @@ class SocialAuthModule(val reactContext: ReactApplicationContext) : ReactContext
         account?.idToken?.let { token ->
 
           // Force the user to select an account on each log in
-          GoogleSignIn.getClient(reactContext, defaultGoogleSignInOptions())
+          GoogleSignIn.getClient(reactContext, googleSignInOptions)
             .signOut()
 
           Toast.makeText(reactApplicationContext, token, Toast.LENGTH_SHORT)
@@ -97,8 +100,10 @@ class SocialAuthModule(val reactContext: ReactApplicationContext) : ReactContext
   var callbackManager: CallbackManager? = null
 
   @ReactMethod
-  fun facebookSignIn(resolve: Callback) {
+  fun facebookSignIn(appID: String, resolve: Callback) {
     this.resolver = resolve
+
+    FacebookSdk.setApplicationId(appID)
 
     if (!FacebookSdk.isInitialized()) {
       FacebookSdk.sdkInitialize(reactApplicationContext);
