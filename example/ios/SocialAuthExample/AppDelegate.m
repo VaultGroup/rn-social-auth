@@ -31,6 +31,8 @@ static void InitializeFlipper(UIApplication *application) {
 
 @import GoogleSignIn;
 
+@import FBSDKCoreKit;
+
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
@@ -67,6 +69,11 @@ static void InitializeFlipper(UIApplication *application) {
   if ([[GIDSignIn sharedInstance] handleURL:url]) {
     return YES;
   }
+
+  if ([[FBSDKApplicationDelegate sharedInstance] application:app openURL:url options:options]) {
+    return YES;
+  }
+
   return NO;
 }
 

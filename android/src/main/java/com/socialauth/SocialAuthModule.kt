@@ -1,14 +1,19 @@
 package com.socialauth
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
-import android.util.Log
 import android.widget.Toast
+import com.facebook.CallbackManager
+import com.facebook.FacebookCallback
+import com.facebook.FacebookException
+import com.facebook.FacebookSdk
+import com.facebook.login.LoginManager
+import com.facebook.login.LoginResult
 import com.facebook.react.bridge.*
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
+
 
 val RC_GOOGLE_SIGN_IN = 999
 
@@ -24,7 +29,6 @@ class SocialAuthModule(val reactContext: ReactApplicationContext) : ReactContext
     return "SocialAuth"
   }
 
-
   fun defaultGoogleSignInOptions() = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
     .requestIdToken("539083112611-var842hv7fn4sj8q92suirkrrm7nhl5f.apps.googleusercontent.com")
     .requestEmail()
@@ -38,6 +42,9 @@ class SocialAuthModule(val reactContext: ReactApplicationContext) : ReactContext
   }
 
   override fun onActivityResult(activity: Activity?, requestCode: Int, resultCode: Int, data: Intent?) {
+    if (callbackManager?.onActivityResult(requestCode, resultCode, data) == true) {
+      return
+    }
 
     if (requestCode == RC_GOOGLE_SIGN_IN) {
 
@@ -83,5 +90,39 @@ class SocialAuthModule(val reactContext: ReactApplicationContext) : ReactContext
 
     promise.resolve(a * b)
 
+
+  }
+
+
+  var callbackManager: CallbackManager? = null
+
+  @ReactMethod
+  fun facebookSignIn(resolve: Callback) {
+    this.resolver = resolve
+
+    if (!FacebookSdk.isInitialized()) {
+      FacebookSdk.sdkInitialize(reactApplicationContext);
+    }
+
+    callbackManager = CallbackManager.Factory.create();
+
+    LoginManager.getInstance().registerCallback(callbackManager,
+      object : FacebookCallback<LoginResult?> {
+        override fun onSuccess(loginResult: LoginResult?) {
+
+          resolver?.invoke(loginResult?.accessToken?.token)
+
+        }
+
+        override fun onCancel() {
+          resolver?.invoke("cancelled")
+        }
+
+        override fun onError(exception: FacebookException) {
+          resolver?.invoke(exception.localizedMessage)
+        }
+      })
+
+    LoginManager.getInstance().logIn(reactContext.currentActivity, arrayListOf("public_profile"))
   }
 }

@@ -129,4 +129,6 @@ dependencies {
   api 'com.facebook.react:react-native:+'
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
   implementation 'com.google.android.gms:play-services-auth:19.0.0'
+  implementation 'com.facebook.android:facebook-android-sdk:[5,6)'
+
 }
