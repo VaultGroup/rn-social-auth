@@ -30,7 +30,6 @@ static void InitializeFlipper(UIApplication *application) {
 #endif
 
 @import GoogleSignIn;
-
 @import FBSDKCoreKit;
 
 @implementation AppDelegate

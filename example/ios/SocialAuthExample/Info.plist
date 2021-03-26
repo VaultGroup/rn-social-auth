@@ -31,15 +31,15 @@
 			</array>
 		</dict>
     
-    <dict>
-      <key>CFBundleTypeRole</key>
-      <string>Editor</string>
-      <key>CFBundleURLSchemes</key>
-      <array>
-        <string>fb788977271724922</string>
-      </array>
-    </dict>
-  </array>
+		<dict>
+		<key>CFBundleTypeRole</key>
+		<string>Editor</string>
+		<key>CFBundleURLSchemes</key>
+		<array>
+			<string>fb788977271724922</string>
+		</array>
+		</dict>
+	</array>
     
 
 	<key>CFBundleVersion</key>

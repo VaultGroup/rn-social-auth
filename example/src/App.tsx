@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { StyleSheet, View, Text, Platform } from 'react-native';
-import { AppleButton, Config, FacebookButton, GenericEmailButton, GoogleButton, IconButton } from 'social-auth';
+import { Config, AppleButton, FacebookButton, GenericEmailButton, GoogleButton, IconButton } from 'social-auth';
 
 
 if (Platform.OS == "android") {
@@ -41,11 +41,7 @@ export default function App() {
 
     <GenericEmailButton onPress={()=>{}}/>
 
-    <View style={{height: 24}} />
 
-    <Text>
-        Or sign in with:
-    </Text>
     <View style={{height: 24}} />
 
     { appleSignInButton() }
@@ -70,8 +66,6 @@ export default function App() {
 
     </View>
 
-    <View style={{height: 48}} />
-        <Text>Result: {result}</Text>
     </View>
   );
 }
