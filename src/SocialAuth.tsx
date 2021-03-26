@@ -1,4 +1,4 @@
-import { NativeModules } from 'react-native';
+import { NativeModules, Platform } from 'react-native';
 import { Config } from "./config";
 
 type SocialAuthType = {
@@ -41,8 +41,14 @@ export const facebookSignIn = (callback: (response: string | string[] | null) =>
     Caller.facebookSignIn(Config.facebookAppID, callback)
 }
 
-export const appleSignIn = () => {
+export const appleSignIn = (callback: (response: string | string[] | null) => void) => {
+    if (Platform.OS === "android") {
+        const error = "Apple Sign In only available on iOS"
+        console.error(error)
+        throw Error(error)
+    }
 
+    Caller.appleSignIn(callback)
 }
 
 export default SocialAuth as SocialAuthType;

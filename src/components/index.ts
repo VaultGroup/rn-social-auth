@@ -1,3 +1,6 @@
-export * from "./FacebookSignInButton"
-export * from "./GoogleSignInButton"
-export * from "./AppleSignInButton"
+export * from "./AppleButton"
+export * from "./FacebookButton"
+export * from "./GenericEmailButton"
+export * from "./GoogleButton"
+export * from "./IconButton"
+

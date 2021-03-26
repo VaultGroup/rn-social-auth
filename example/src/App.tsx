@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { StyleSheet, View, Text, Platform } from 'react-native';
-import { AppleButton, Config, FacebookButton, GoogleButton } from 'social-auth';
+import { AppleButton, Config, FacebookButton, GenericEmailButton, GoogleButton, IconButton } from 'social-auth';
 
 
 if (Platform.OS == "android") {
@@ -28,9 +28,10 @@ export default function App() {
         return(
             <View>
 
+                <AppleButton signInCallback={signInResponse} />
+
                 <View style={{height: 24}} />
 
-                <AppleButton signInCallback={signInResponse} />
             </View>
         )
     }
@@ -38,17 +39,39 @@ export default function App() {
   return (
     <View style={styles.container} >
 
+    <GenericEmailButton onPress={()=>{}}/>
+
+    <View style={{height: 24}} />
+
+    <Text>
+        Or sign in with:
+    </Text>
+    <View style={{height: 24}} />
+
+    { appleSignInButton() }
+
     <GoogleButton signInCallback={signInResponse} style={{ backgroundColor:"red" }}/>
 
     <View style={{height: 24}} />
 
     <FacebookButton signInCallback={signInResponse} />
 
-    { appleSignInButton() }
-
     <View style={{height: 24}} />
 
-    <Text>Result: {result}</Text>
+    <View style={{flexDirection:"row", justifyContent:"space-evenly", width :"60%"}}>
+
+    <IconButton logo="apple" signInCallback={signInResponse} />
+
+    <IconButton logo="google" signInCallback={signInResponse} />
+
+    <IconButton logo="facebook" signInCallback={signInResponse} />
+
+    <IconButton logo="email" signInCallback={signInResponse} />
+
+    </View>
+
+    <View style={{height: 48}} />
+        <Text>Result: {result}</Text>
     </View>
   );
 }

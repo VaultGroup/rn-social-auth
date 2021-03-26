@@ -1,3 +1,3 @@
-export * from "./SocialAuth"
-export * from "./config"
 export * from "./components"
+export * from "./config"
+export * from "./SocialAuth"
