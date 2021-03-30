@@ -1,4 +1,5 @@
 import type { ViewStyle } from "react-native";
+import type { SocialAuthResponse } from "src/SocialAuthResponse";
 
 export interface LogoStyleProps {
     logo: "apple" | "google" | "facebook" | "email"
@@ -6,7 +7,7 @@ export interface LogoStyleProps {
 
 export interface SignInButtonProps {
     onPress?: () => void
-    signInCallback?: (response: any) => void
+    signInCallback?: (error: any, response: SocialAuthResponse|null) => void
     style?: ViewStyle // ignored for icon button
     borderRadius?: number
 }

@@ -8,33 +8,51 @@ class SocialAuth: NSObject, GIDSignInDelegate, ASAuthorizationControllerDelegate
  
     var resolver: RCTResponseSenderBlock?
 
-
     @objc(googleSignIn:withResolver:)
     func googleSignIn(clientID: String, resolve: RCTResponseSenderBlock?) -> Void {
         self.resolver = resolve
+        
+        DispatchQueue.main.async {
+            let gid = GIDSignIn.sharedInstance()
+            gid?.presentingViewController = UIApplication.shared.keyWindow!.rootViewController!
+            gid?.delegate = self
+            gid?.clientID = clientID
+            gid?.signIn()
+        }
+    }
 
-        let gid = GIDSignIn.sharedInstance()
-        gid?.presentingViewController = UIApplication.shared.keyWindow!.rootViewController!
-        gid?.delegate = self
-        gid?.clientID = clientID
-        gid?.signIn()
+    func resolveWith(token: String?, firstName: String?, lastName: String?, email: String?, phone: String?, imageUrl: String?) {
+        let response = SocialAuthResponse(
+            token: token ?? "",
+            firstName: firstName ?? "",
+            lastName: lastName ?? "",
+            email: email ?? "",
+            phone: phone ?? "",
+            imageUrl: imageUrl ?? ""
+        )
+        
+        resolver?([NSNull(), response.toDictionary])
+    }
+
+    func resolveWith(error: Error?, orString string: String = "Uknown Error") {
+        resolver?([error?.localizedDescription ?? string, NSNull()])
     }
 
     func sign(_ signIn: GIDSignIn?, didSignInFor user: GIDGoogleUser?, withError error: Error?) {
 
-        if error == nil, let credential = user?.authentication, let code = credential.idToken {
+        if error == nil, let credential = user?.authentication, let code = credential.idToken, let profile = user?.profile {
             
-            // GIDSignIn.sharedInstance()?.signOut()
-            
-            resolver?([code])
+            self.resolveWith(
+                token: code,
+                firstName: profile.givenName ?? "",
+                lastName: profile.familyName ?? "",
+                email: profile.email ?? "",
+                phone: "",
+                imageUrl: profile.imageURL(withDimension: 400)?.path ?? ""
+            )
 
         } else {
-            if let error = error {
-                print(error.localizedDescription)
-                resolver?([error.localizedDescription])
-            } else {
-                resolver?([""])
-            }
+            self.resolveWith(error: error)
         }
     }
 
@@ -42,36 +60,57 @@ class SocialAuth: NSObject, GIDSignInDelegate, ASAuthorizationControllerDelegate
     @objc(facebookSignIn:withResolver:)
     func facebookSignIn(appID: String, resolve: RCTResponseSenderBlock?) -> Void {
         self.resolver = resolve
-
-        FBSDKCoreKit.Settings.appID = appID
-        
-        let loginManager = LoginManager()
-        
-        loginManager.logIn(permissions: ["public_profile", "email"], from: UIApplication.shared.keyWindow!.rootViewController!) { (result, error) in
-
-            if (error != nil) {
-
-                self.resolver?(["Uknown!"])
-                // Process error
-
-            } else if result?.isCancelled == true {
-                self.resolver?(["Canceld!"])
-                // User Cancellation
-
-            } else {
-                //Success
-                if result?.grantedPermissions.contains("email") == true && result?.grantedPermissions.contains("public_profile") == true && AccessToken.current != nil {
-                        
-                    let accessToken = AccessToken.current?.tokenString
-                    self.resolver?([accessToken])
-
+        DispatchQueue.main.async {
+            
+            FBSDKCoreKit.Settings.appID = appID
+            
+            ApplicationDelegate.initializeSDK(nil)
+            
+            let loginManager = LoginManager()
+            
+            loginManager.logIn(permissions: ["public_profile", "email"], from: UIApplication.shared.keyWindow!.rootViewController!) { (result, error) in
+                
+                if (error != nil) {
+                    
+                    self.resolveWith(error: error)
+                    
+                    
+                } else if result?.isCancelled == true {
+                    
+                    self.resolveWith(error: nil, orString: "Operation Cancelled")
+                    
+                    
                 } else {
-                    self.resolver?(["No permissions!"])
-                    //Handle error
+                    
+                    if result?.grantedPermissions.contains("email") == true
+                        && result?.grantedPermissions.contains("public_profile") == true,
+                        let accessToken = AccessToken.current?.tokenString {
+                        
+                        GraphRequest(graphPath: "me", parameters: ["fields":"first_name,last_name,email,picture.width(640)"]).start{ (connection, result, error) in
+                            
+                            guard let result = result as? [String:Any] else {
+                                return
+                            }
+                            
+                            let pictureObject = result["picture"] as? [String: [String: Any]]
+                            
+                            self.resolveWith(
+                                token: accessToken,
+                                firstName: result["first_name"] as? String,
+                                lastName: result["last_name"] as? String,
+                                email: result["email"] as? String,
+                                phone: result["phone"] as? String,
+                                imageUrl: pictureObject?["data"]?["url"] as? String
+                            )
+                        }
+                        
+                    } else {
+                        
+                        self.resolveWith(error: nil, orString: "No permissions granted")
+                    }
                 }
             }
         }
-
     }
     
     @objc(appleSignIn:)
@@ -79,7 +118,7 @@ class SocialAuth: NSObject, GIDSignInDelegate, ASAuthorizationControllerDelegate
         self.resolver = resolve
         
         guard #available(iOS 13.0, *) else {
-            resolve?([""])
+            self.resolveWith(error: nil, orString: "You must be using iOS 13 or newer")
             return
         }
         
@@ -101,31 +140,30 @@ class SocialAuth: NSObject, GIDSignInDelegate, ASAuthorizationControllerDelegate
     @available(iOS 13.0, *)
     func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
         switch authorization.credential {
-            case let appleIDCredential as ASAuthorizationAppleIDCredential:
+            case let credential as ASAuthorizationAppleIDCredential:
                 
                 // Create an account in your system.
-                let userIdentifier = appleIDCredential.user
-                let fullName = appleIDCredential.fullName
-                let email = appleIDCredential.email
+                let userIdentifier = credential.user
+                let firstName = credential.fullName?.givenName
+                let lastName = credential.fullName?.familyName
+                let email = credential.email
                 
-                self.resolver?([userIdentifier])
-                // For the purpose of this demo app, store the `userIdentifier` in the keychain.
-//                    self.saveUserInKeychain(userIdentifier)
-//
-//                    // For the purpose of this demo app, show the Apple ID credential information in the `ResultViewController`.
-//                    self.showResultViewController(userIdentifier: userIdentifier, fullName: fullName, email: email)
-            
-            case let passwordCredential as ASPasswordCredential:
+                self.resolveWith(
+                    token: userIdentifier,
+                    firstName: firstName,
+                    lastName: lastName,
+                    email: email,
+                    phone: "",
+                    imageUrl: ""
+                )
+                
+            case let /*passwordCredential*/_ as ASPasswordCredential:
             
                 // Sign in using an existing iCloud Keychain credential.
-                let username = passwordCredential.user
-                let password = passwordCredential.password
+//                let username = passwordCredential.user
+//                let password = passwordCredential.password
                 
-                self.resolver?([username])
-                // For the purpose of this demo app, show the password credential as an alert.
-//                    DispatchQueue.main.async {
-//                        self.showPasswordCredentialAlert(username: username, password: password)
-//                    }
+                self.resolveWith(error: nil, orString: "Unsupported")
                 
             default:
                 break
@@ -134,6 +172,6 @@ class SocialAuth: NSObject, GIDSignInDelegate, ASAuthorizationControllerDelegate
     
     @available(iOS 13.0, *)
     func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
-        self.resolver?([error])
+        self.resolveWith(error: error)
     }
 }

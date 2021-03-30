@@ -41,9 +41,14 @@
 		</dict>
 	</array>
     
+  <key>LSApplicationQueriesSchemes</key>
+  <array>
+    <string>fbauth2</string>
+  </array>
 
 	<key>CFBundleVersion</key>
 	<string>1</string>
+  
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>

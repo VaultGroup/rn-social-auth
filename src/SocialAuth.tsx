@@ -1,10 +1,21 @@
 import { NativeModules, Platform } from 'react-native';
 import { Config } from "./config";
+import type { SocialAuthResponse } from './SocialAuthResponse';
 
 type SocialAuthType = {
-    googleSignIn(clientID: string, resolve: (response: string | string[] | null) => void): Promise<void>;
-    facebookSignIn(appID: string, resolve: (response: string | string[] | null) => void): Promise<void>;
-    appleSignIn(resolve: (response: string | string[] | null) => void): Promise<void>;
+    googleSignIn(
+        clientID: string, 
+        resolve: (error: string|null, response: SocialAuthResponse|null) => void
+    ): Promise<void>;
+
+    facebookSignIn(
+        appID: string, 
+        resolve: (error: string|null, response: SocialAuthResponse|null) => void
+    ): Promise<void>;
+
+    appleSignIn(
+        resolve: (error: string|null, response: SocialAuthResponse|null) => void
+    ): Promise<void>;
 };
 
 const { SocialAuth } = NativeModules;
@@ -16,7 +27,7 @@ const Caller = SocialAuth as SocialAuthType
  * this function
  * @param callback A response object returned from google or an error otherwise
  */
-export const googleSignIn = (callback: (response: string | string[] | null) => void) => {
+export const googleSignIn = (callback: (error: string|null, response: SocialAuthResponse|null) => void) => {
     if (Config.googleClientID === undefined || Config.googleClientID.length == 0) {
         const error = "You must configure a client ID before using SocialAuth"
         console.warn(error)
