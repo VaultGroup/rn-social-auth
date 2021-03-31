@@ -8,10 +8,6 @@ class SocialAuth: NSObject, GIDSignInDelegate, ASAuthorizationControllerDelegate
  
     var resolver: RCTResponseSenderBlock?
 
-    @objc static func requiresMainQueueSetup() -> Bool {
-        return true
-    }
-
     @objc(googleSignIn:withResolver:)
     func googleSignIn(clientID: String, resolve: RCTResponseSenderBlock?) -> Void {
         self.resolver = resolve

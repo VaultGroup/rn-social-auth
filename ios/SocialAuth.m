@@ -12,4 +12,8 @@ RCT_EXTERN_METHOD(facebookSignIn:(NSString)appID withResolver:(RCTResponseSender
 
 RCT_EXTERN_METHOD(appleSignIn:(RCTResponseSenderBlock)resolve)
 
++ (BOOL) requiresMainQueueSetup {
+  return YES;
+}
+
 @end
