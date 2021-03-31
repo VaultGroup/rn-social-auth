@@ -7,13 +7,7 @@ A social authentication library for react native
 ## Installation
 
 ```sh
-cd <project_dir>
-
-mkdir lib && cd lib
-
-git clone git@github.com:VaultGroup/rn-social-auth.git
-
-rm -rf example
+npm i VaultGroup/rn-social-auth
 ```
 
 ### Google Authentication
