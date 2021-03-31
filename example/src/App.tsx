@@ -16,7 +16,7 @@ Config.facebookAppID = "788977271724922"
 export default function App() {
     const [result, setResult] = React.useState<string | null>();
 
-    const signInResponse = (error: any, response: SocialAuthResponse | null) => {
+    const signInResponse = (_error: any, response: SocialAuthResponse | null) => {
         setResult(
             response?.token + "\n"
             + response?.firstName + "\n"

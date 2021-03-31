@@ -42,7 +42,7 @@ export const googleSignIn = (callback: (error: string|null, response: SocialAuth
  * this function
  * @param callback A response object returned from google or an error otherwise
  */
-export const facebookSignIn = (callback: (response: string | string[] | null) => void) => {
+export const facebookSignIn = (callback: (error: string | null, response: SocialAuthResponse | null) => void) => {
     if (Config.facebookAppID === undefined || Config.facebookAppID.length == 0) {
         const error = "You must configure a client ID before using SocialAuth"
         console.warn(error)
@@ -52,7 +52,7 @@ export const facebookSignIn = (callback: (response: string | string[] | null) =>
     Caller.facebookSignIn(Config.facebookAppID, callback)
 }
 
-export const appleSignIn = (callback: (response: string | string[] | null) => void) => {
+export const appleSignIn = (callback: (error: string | null, response: SocialAuthResponse | null) => void) => {
     if (Platform.OS === "android") {
         const error = "Apple Sign In only available on iOS"
         console.error(error)

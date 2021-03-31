@@ -2,11 +2,12 @@ import React from "react"
 import { TouchableOpacity } from "react-native"
 import type { LogoStyleProps } from "./props"
 import * as SocialAuth from "../SocialAuth"
+import type { SocialAuthResponse } from "src/SocialAuthResponse"
 
 
 interface TouchHandlerViewProps extends LogoStyleProps {
     onPress?: () => void
-    signInCallback?: (response: any) => void
+    signInCallback?: (error: string | null, response: SocialAuthResponse|null) => void
     children?: JSX.Element | JSX.Element[]
 }
 
