@@ -6,7 +6,11 @@ import { TouchHandlerView } from "./TouchHandlerView"
 
 export const AppleButton = (props: SignInButtonProps) => {
     return (
-        <TouchHandlerView logo="apple" onPress={props.onPress} signInCallback={props.signInCallback}>
+        <TouchHandlerView
+            logo="apple"
+            onPress={props.onPress}
+            signInCallback={props.signInCallback}
+        >
 
             <View style={{ backgroundColor: "black", height: 44, width: 260, borderRadius: props.borderRadius ?? 22, paddingEnd: 24, alignItems: "center", justifyContent: "center", elevation: 3, flexDirection: "row" }}>
 

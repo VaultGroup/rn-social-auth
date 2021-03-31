@@ -8,17 +8,19 @@ class SocialAuth: NSObject, GIDSignInDelegate, ASAuthorizationControllerDelegate
  
     var resolver: RCTResponseSenderBlock?
 
+    @objc static func requiresMainQueueSetup() -> Bool {
+        return true
+    }
+
     @objc(googleSignIn:withResolver:)
     func googleSignIn(clientID: String, resolve: RCTResponseSenderBlock?) -> Void {
         self.resolver = resolve
         
-        DispatchQueue.main.async {
-            let gid = GIDSignIn.sharedInstance()
-            gid?.presentingViewController = UIApplication.shared.keyWindow!.rootViewController!
-            gid?.delegate = self
-            gid?.clientID = clientID
-            gid?.signIn()
-        }
+        let gid = GIDSignIn.sharedInstance()
+        gid?.presentingViewController = UIApplication.shared.keyWindow!.rootViewController!
+        gid?.delegate = self
+        gid?.clientID = clientID
+        gid?.signIn()
     }
 
     func resolveWith(token: String?, firstName: String?, lastName: String?, email: String?, phone: String?, imageUrl: String?) {
@@ -48,7 +50,7 @@ class SocialAuth: NSObject, GIDSignInDelegate, ASAuthorizationControllerDelegate
                 lastName: profile.familyName ?? "",
                 email: profile.email ?? "",
                 phone: "",
-                imageUrl: profile.imageURL(withDimension: 400)?.path ?? ""
+                imageUrl: profile.imageURL(withDimension: 400)?.absoluteString ?? ""
             )
 
         } else {
@@ -60,54 +62,52 @@ class SocialAuth: NSObject, GIDSignInDelegate, ASAuthorizationControllerDelegate
     @objc(facebookSignIn:withResolver:)
     func facebookSignIn(appID: String, resolve: RCTResponseSenderBlock?) -> Void {
         self.resolver = resolve
-        DispatchQueue.main.async {
             
-            FBSDKCoreKit.Settings.appID = appID
+        FBSDKCoreKit.Settings.appID = appID
+        
+        ApplicationDelegate.initializeSDK(nil)
+        
+        let loginManager = LoginManager()
+        
+        loginManager.logIn(permissions: ["public_profile", "email"], from: UIApplication.shared.keyWindow!.rootViewController!) { (result, error) in
             
-            ApplicationDelegate.initializeSDK(nil)
-            
-            let loginManager = LoginManager()
-            
-            loginManager.logIn(permissions: ["public_profile", "email"], from: UIApplication.shared.keyWindow!.rootViewController!) { (result, error) in
+            if (error != nil) {
                 
-                if (error != nil) {
+                self.resolveWith(error: error)
+                
+                
+            } else if result?.isCancelled == true {
+                
+                self.resolveWith(error: nil, orString: "Operation Cancelled")
+                
+                
+            } else {
+                
+                if result?.grantedPermissions.contains("email") == true
+                    && result?.grantedPermissions.contains("public_profile") == true,
+                    let accessToken = AccessToken.current?.tokenString {
                     
-                    self.resolveWith(error: error)
-                    
-                    
-                } else if result?.isCancelled == true {
-                    
-                    self.resolveWith(error: nil, orString: "Operation Cancelled")
-                    
+                    GraphRequest(graphPath: "me", parameters: ["fields":"first_name,last_name,email,picture.width(640)"]).start{ (connection, result, error) in
+                        
+                        guard let result = result as? [String:Any] else {
+                            return
+                        }
+                        
+                        let pictureObject = result["picture"] as? [String: [String: Any]]
+                        
+                        self.resolveWith(
+                            token: accessToken,
+                            firstName: result["first_name"] as? String,
+                            lastName: result["last_name"] as? String,
+                            email: result["email"] as? String,
+                            phone: result["phone"] as? String,
+                            imageUrl: pictureObject?["data"]?["url"] as? String
+                        )
+                    }
                     
                 } else {
                     
-                    if result?.grantedPermissions.contains("email") == true
-                        && result?.grantedPermissions.contains("public_profile") == true,
-                        let accessToken = AccessToken.current?.tokenString {
-                        
-                        GraphRequest(graphPath: "me", parameters: ["fields":"first_name,last_name,email,picture.width(640)"]).start{ (connection, result, error) in
-                            
-                            guard let result = result as? [String:Any] else {
-                                return
-                            }
-                            
-                            let pictureObject = result["picture"] as? [String: [String: Any]]
-                            
-                            self.resolveWith(
-                                token: accessToken,
-                                firstName: result["first_name"] as? String,
-                                lastName: result["last_name"] as? String,
-                                email: result["email"] as? String,
-                                phone: result["phone"] as? String,
-                                imageUrl: pictureObject?["data"]?["url"] as? String
-                            )
-                        }
-                        
-                    } else {
-                        
-                        self.resolveWith(error: nil, orString: "No permissions granted")
-                    }
+                    self.resolveWith(error: nil, orString: "No permissions granted")
                 }
             }
         }

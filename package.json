@@ -119,7 +119,8 @@
           "quoteProps": "consistent",
           "tabWidth": 4,
           "trailingComma": "es5",
-          "useTabs": false
+          "useTabs": false,
+          "semi": false
         }
       ]
     }
@@ -132,7 +133,9 @@
     "quoteProps": "consistent",
     "tabWidth": 4,
     "trailingComma": "es5",
-    "useTabs": false
+    "useTabs": false,
+    "semi": false,
+    "htmlWhitespaceSensitivity": "ignore"
   },
   "react-native-builder-bob": {
     "source": "src",
