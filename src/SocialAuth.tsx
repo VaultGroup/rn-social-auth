@@ -1,6 +1,6 @@
 import { NativeModules, Platform } from 'react-native';
 import { Config } from "./config";
-import type { SocialAuthResponse } from './SocialAuthResponse';
+import type { IdentityProvider, SocialAuthResponse } from './SocialAuthResponse';
 
 type SocialAuthType = {
     googleSignIn(
@@ -34,7 +34,7 @@ export const googleSignIn = (callback: (error: string|null, response: SocialAuth
         throw Error(error)
     }
 
-    Caller.googleSignIn(Config.googleClientID, callback)
+    Caller.googleSignIn(Config.googleClientID, createCallback("google", callback))
 }
 
 /**
@@ -49,7 +49,7 @@ export const facebookSignIn = (callback: (error: string | null, response: Social
         throw Error(error)
     }
 
-    Caller.facebookSignIn(Config.facebookAppID, callback)
+    Caller.facebookSignIn(Config.facebookAppID, createCallback("facebook", callback))
 }
 
 export const appleSignIn = (callback: (error: string | null, response: SocialAuthResponse | null) => void) => {
@@ -59,7 +59,16 @@ export const appleSignIn = (callback: (error: string | null, response: SocialAut
         throw Error(error)
     }
 
-    Caller.appleSignIn(callback)
+    Caller.appleSignIn(createCallback("apple", callback))
+}
+
+const createCallback = (provider: IdentityProvider, resolve: (error: string | null, response: SocialAuthResponse | null) => void): ((error: string | null, response: SocialAuthResponse | null) => void) => {
+    return (error, resolver) => {
+        if (resolver != null) {
+            resolver.identityProvider = provider
+        }
+        resolve(error, resolver)
+    }
 }
 
 export default SocialAuth as SocialAuthType;
