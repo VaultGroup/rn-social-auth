@@ -16,9 +16,9 @@ type SocialAuthType = {
 
     appleSignIn(resolve: (error: string | null, response: SocialAuthResponse | null) => void): Promise<void>
 
-    signOut(token: string): Promise<boolean>
+    signOut(): Promise<boolean>
 
-    signOutProvider(token: string, provider: string): Promise<boolean>
+    signOutProvider(provider: string): Promise<boolean>
 }
 
 const { SocialAuth } = NativeModules
@@ -55,7 +55,7 @@ export const isProviderInvalid = (provider: string): boolean => {
     return true
 }
 
-export const signOut = async (token: string, provider?: string): Promise<boolean> => {
+export const signOut = async (provider?: string): Promise<boolean> => {
     var success = false
 
     if (provider) {
@@ -63,9 +63,9 @@ export const signOut = async (token: string, provider?: string): Promise<boolean
             return false
         }
 
-        success = await Caller.signOutProvider(token, provider)
+        success = await Caller.signOutProvider(provider)
     } else {
-        success = await Caller.signOut(token)
+        success = await Caller.signOut()
     }
 
     return success

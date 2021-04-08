@@ -57,7 +57,7 @@ export default function App() {
     }
 
     const onSignOutPressed = async () => {
-        let success = await signOut(response?.token ?? "", response?.identityProvider ?? undefined)
+        let success = await signOut(response?.identityProvider)
         setResult(success ? "Signed out" : "Error signing out")
     }
 

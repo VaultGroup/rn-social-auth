@@ -8,24 +8,24 @@ class SocialAuth: NSObject, GIDSignInDelegate, ASAuthorizationControllerDelegate
  
     var resolver: RCTResponseSenderBlock?
     
-    @objc(signOut:resolver:rejecter:)
-    func signOut(token: String, resolver: RCTPromiseResolveBlock, rejecter: RCTPromiseRejectBlock) {
+    @objc(signOut:rejecter:)
+    func signOut(resolver: RCTPromiseResolveBlock, rejecter: RCTPromiseRejectBlock) {
         
-        if googleSignOut(token: token) {
+        if googleSignOut() {
             resolver(true)
             return
         }
         
-        if facebookSignOut(token: token) {
+        if facebookSignOut() {
             resolver(true)
             return
         }
         
-        rejecter("sign_out_failed", "Unable to sign out with token: \(token)", nil)
+        rejecter("sign_out_failed", "Unable to sign out. Are you signed in?", nil)
     }
     
-    @objc(signOutProvider:provider:resolver:rejecter:)
-    func signOutProvider(token: String, provider: String, resolver: RCTPromiseResolveBlock, rejecter: RCTPromiseRejectBlock) {
+    @objc(signOutProvider:resolver:rejecter:)
+    func signOutProvider(provider: String, resolver: RCTPromiseResolveBlock, rejecter: RCTPromiseRejectBlock) {
         
         switch provider {
         
@@ -34,13 +34,13 @@ class SocialAuth: NSObject, GIDSignInDelegate, ASAuthorizationControllerDelegate
                 break
                 
             case "google":
-                if googleSignOut(token: token) {
+                if googleSignOut() {
                     resolver(true)
                     return
                 }
                 
             case "facebook":
-                if facebookSignOut(token: token) {
+                if facebookSignOut() {
                     resolver(true)
                     return
                 }
@@ -48,14 +48,14 @@ class SocialAuth: NSObject, GIDSignInDelegate, ASAuthorizationControllerDelegate
             default: break
         }
         
-        rejecter("sign_out_failed", "Unable to sign out of \(provider) with token: \(token)", nil)
+        rejecter("sign_out_failed", "Unable to sign out of \(provider). Are you signed in?", nil)
     }
     
     
-    func googleSignOut(token: String) -> Bool {
+    func googleSignOut() -> Bool {
         let gid = GIDSignIn.sharedInstance()
         
-        if gid?.currentUser?.authentication?.idToken == token {
+        if gid?.currentUser != nil {
             gid?.signOut()
             return true
         }
@@ -63,8 +63,8 @@ class SocialAuth: NSObject, GIDSignInDelegate, ASAuthorizationControllerDelegate
         return false
     }
     
-    func facebookSignOut(token: String) ->Bool {
-        if let accessToken = AccessToken.current?.tokenString, accessToken == token {
+    func facebookSignOut() -> Bool {
+        if AccessToken.current != nil {
             let loginManager = LoginManager()
             loginManager.logOut()
             return true
