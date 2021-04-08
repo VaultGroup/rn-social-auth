@@ -78,12 +78,7 @@ export const IconButton = (props: IconButtonProps) => {
             default:
                 return (
                     <View style={{ padding: padding }}>
-                        <Image
-                            height={1}
-                            width={1}
-                            source={require("../assets/env.png")}
-                            style={styles.imageView}
-                        />
+                        <Image height={1} width={1} source={require("../assets/env.png")} style={styles.imageView} />
                     </View>
                 )
         }
