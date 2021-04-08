@@ -135,7 +135,8 @@
     "trailingComma": "es5",
     "useTabs": false,
     "semi": false,
-    "htmlWhitespaceSensitivity": "ignore"
+    "htmlWhitespaceSensitivity": "ignore",
+    "printWidth": 120
   },
   "react-native-builder-bob": {
     "source": "src",
@@ -150,5 +151,8 @@
         }
       ]
     ]
+  },
+  "dependencies": {
+    "social-auth": "github:vaultgroup/rn-social-auth"
   }
 }
