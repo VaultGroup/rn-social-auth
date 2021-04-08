@@ -12,6 +12,15 @@ RCT_EXTERN_METHOD(facebookSignIn:(NSString)appID withResolver:(RCTResponseSender
 
 RCT_EXTERN_METHOD(appleSignIn:(RCTResponseSenderBlock)resolve)
 
+RCT_EXTERN_METHOD(signOut:(NSString)token
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(signOut:(NSString)token
+                  provider:(NSString)provider
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+
 + (BOOL) requiresMainQueueSetup {
   return YES;
 }

@@ -7,6 +7,71 @@ import AuthenticationServices
 class SocialAuth: NSObject, GIDSignInDelegate, ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding {
  
     var resolver: RCTResponseSenderBlock?
+    
+    @objc(signOut:resolver:rejecter:)
+    func signOut(token: String, resolver: RCTPromiseResolveBlock, rejecter: RCTPromiseRejectBlock) {
+        
+        if googleSignOut(token: token) {
+            resolver(true)
+            return
+        }
+        
+        if facebookSignOut(token: token) {
+            resolver(true)
+            return
+        }
+        
+        rejecter("sign_out_failed", "Unable to sign out with token: \(token)", nil)
+    }
+    
+    @objc(signOut:provider:resolver:rejecter:)
+    func signOut(token: String, provider: String, resolver: RCTPromiseResolveBlock, rejecter: RCTPromiseRejectBlock) {
+        
+        switch provider {
+        
+            case "apple":
+                // Doesn't look like this is supported?
+                break
+                
+            case "google":
+                if googleSignOut(token: token) {
+                    resolver(true)
+                    return
+                }
+                
+            case "facebook":
+                if facebookSignOut(token: token) {
+                    resolver(true)
+                    return
+                }
+                
+            default: break
+        }
+        
+        rejecter("sign_out_failed", "Unable to sign out of \(provider) with token: \(token)", nil)
+    }
+    
+    
+    func googleSignOut(token: String) -> Bool {
+        let gid = GIDSignIn.sharedInstance()
+        
+        if gid?.currentUser?.authentication?.idToken == token {
+            gid?.signOut()
+            return true
+        }
+        
+        return false
+    }
+    
+    func facebookSignOut(token: String) ->Bool {
+        if let accessToken = AccessToken.current?.tokenString, accessToken == token {
+            let loginManager = LoginManager()
+            loginManager.logOut()
+            return true
+        }
+            
+        return false
+    }
 
     @objc(googleSignIn:withResolver:)
     func googleSignIn(clientID: String, resolve: RCTResponseSenderBlock?) -> Void {

@@ -1,24 +1,26 @@
-import { NativeModules, Platform } from 'react-native';
-import { Config } from "./config";
-import type { IdentityProvider, SocialAuthResponse } from './SocialAuthResponse';
+import { NativeModules, Platform } from "react-native"
+import { Config } from "./config"
+import type { IdentityProvider, SocialAuthResponse } from "./SocialAuthResponse"
 
 type SocialAuthType = {
     googleSignIn(
-        clientID: string, 
-        resolve: (error: string|null, response: SocialAuthResponse|null) => void
-    ): Promise<void>;
+        clientID: string,
+        resolve: (error: string | null, response: SocialAuthResponse | null) => void
+    ): Promise<void>
 
     facebookSignIn(
-        appID: string, 
-        resolve: (error: string|null, response: SocialAuthResponse|null) => void
-    ): Promise<void>;
+        appID: string,
+        resolve: (error: string | null, response: SocialAuthResponse | null) => void
+    ): Promise<void>
 
-    appleSignIn(
-        resolve: (error: string|null, response: SocialAuthResponse|null) => void
-    ): Promise<void>;
-};
+    appleSignIn(resolve: (error: string | null, response: SocialAuthResponse | null) => void): Promise<void>
 
-const { SocialAuth } = NativeModules;
+    signOut(token: string): Promise<boolean>
+
+    signOut(token: string, provider: string): Promise<boolean>
+}
+
+const { SocialAuth } = NativeModules
 
 const Caller = SocialAuth as SocialAuthType
 
@@ -27,7 +29,7 @@ const Caller = SocialAuth as SocialAuthType
  * this function
  * @param callback A response object returned from google or an error otherwise
  */
-export const googleSignIn = (callback: (error: string|null, response: SocialAuthResponse|null) => void) => {
+export const googleSignIn = (callback: (error: string | null, response: SocialAuthResponse | null) => void) => {
     if (Config.googleClientID === undefined || Config.googleClientID.length == 0) {
         const error = "You must configure a client ID before using SocialAuth"
         console.warn(error)
@@ -62,7 +64,10 @@ export const appleSignIn = (callback: (error: string | null, response: SocialAut
     Caller.appleSignIn(createCallback("apple", callback))
 }
 
-const createCallback = (provider: IdentityProvider, resolve: (error: string | null, response: SocialAuthResponse | null) => void): ((error: string | null, response: SocialAuthResponse | null) => void) => {
+const createCallback = (
+    provider: IdentityProvider,
+    resolve: (error: string | null, response: SocialAuthResponse | null) => void
+): ((error: string | null, response: SocialAuthResponse | null) => void) => {
     return (error, resolver) => {
         if (resolver != null) {
             resolver.identityProvider = provider
@@ -71,4 +76,4 @@ const createCallback = (provider: IdentityProvider, resolve: (error: string | nu
     }
 }
 
-export default SocialAuth as SocialAuthType;
+export default SocialAuth as SocialAuthType
