@@ -114,14 +114,7 @@
     ],
     "rules": {
       "prettier/prettier": [
-        "warn",
-        {
-          "quoteProps": "consistent",
-          "tabWidth": 4,
-          "trailingComma": "es5",
-          "useTabs": false,
-          "semi": false
-        }
+        "warn"
       ]
     }
   },
@@ -135,7 +128,6 @@
     "trailingComma": "es5",
     "useTabs": false,
     "semi": false,
-    "htmlWhitespaceSensitivity": "ignore",
     "printWidth": 120
   },
   "react-native-builder-bob": {

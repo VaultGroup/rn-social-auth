@@ -26,9 +26,7 @@ const { SocialAuth } = NativeModules
 const Caller = SocialAuth as SocialAuthType
 
 export function isProviderInvalid(provider: string): boolean {
-
     switch (provider) {
-
         case "google":
             if (Config.googleClientID === undefined || Config.googleClientID.length == 0) {
                 console.warn(SocialAuthError.withCode(SocialAuthErrorCode.CLIENT_ID))
@@ -57,7 +55,6 @@ export function isProviderInvalid(provider: string): boolean {
     return true
 }
 
-
 export async function signOut(token: string, provider?: string): Promise<boolean> {
     var success = false
 
@@ -67,14 +64,12 @@ export async function signOut(token: string, provider?: string): Promise<boolean
         }
 
         success = await Caller.signOut(token, provider)
-
     } else {
         success = await Caller.signOut(token)
     }
 
     return success
 }
-
 
 /**
  * Make sure you have configured SocialAuth's googleClientId before calling

@@ -1,4 +1,3 @@
-
 export class SocialAuthResponse {
     constructor(
         public token?: string,
@@ -8,7 +7,7 @@ export class SocialAuthResponse {
         public phone?: string,
         public imageUrl?: string,
         public identityProvider?: IdentityProvider
-    ) { }
+    ) {}
 }
 
-export type IdentityProvider = "apple"|"facebook"|"google"
+export type IdentityProvider = "apple" | "facebook" | "google"
