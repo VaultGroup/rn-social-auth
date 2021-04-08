@@ -24,8 +24,8 @@ class SocialAuth: NSObject, GIDSignInDelegate, ASAuthorizationControllerDelegate
         rejecter("sign_out_failed", "Unable to sign out with token: \(token)", nil)
     }
     
-    @objc(signOut:provider:resolver:rejecter:)
-    func signOut(token: String, provider: String, resolver: RCTPromiseResolveBlock, rejecter: RCTPromiseRejectBlock) {
+    @objc(signOutProvider:provider:resolver:rejecter:)
+    func signOutProvider(token: String, provider: String, resolver: RCTPromiseResolveBlock, rejecter: RCTPromiseRejectBlock) {
         
         switch provider {
         

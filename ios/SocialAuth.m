@@ -16,7 +16,7 @@ RCT_EXTERN_METHOD(signOut:(NSString)token
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 
-RCT_EXTERN_METHOD(signOut:(NSString)token
+RCT_EXTERN_METHOD(signOutProvider:(NSString)token
                   provider:(NSString)provider
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)

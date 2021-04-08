@@ -1,6 +1,6 @@
 import * as React from "react"
 
-import { StyleSheet, View, Text, Platform, ScrollView, SafeAreaView } from "react-native"
+import { StyleSheet, View, Text, Platform, ScrollView, SafeAreaView, Button } from "react-native"
 import {
     Config,
     AppleButton,
@@ -9,6 +9,7 @@ import {
     GoogleButton,
     IconButton,
     SocialAuthResponse,
+    signOut,
 } from "social-auth"
 
 if (Platform.OS == "android") {
@@ -19,9 +20,12 @@ if (Platform.OS == "android") {
 Config.facebookAppID = "788977271724922"
 
 export default function App() {
+
     const [result, setResult] = React.useState<string | null>()
+    const [response, setResponse] = React.useState<SocialAuthResponse | null>()
 
     const signInResponse = (_error: any, response: SocialAuthResponse | null) => {
+        setResponse(response)
         setResult(
             response?.token +
                 "\n" +
@@ -51,6 +55,12 @@ export default function App() {
             )
         }
     }
+
+    const onSignOutPressed = async () => {
+        let success = await signOut(response?.token ?? "", response?.identityProvider ?? undefined)
+        setResult(success ? "Signed out" : "Error signing out")
+    }
+
     return (
         <SafeAreaView style={{ flex: 1 }}>
             <ScrollView style={{ paddingVertical: 0 }}>
@@ -69,7 +79,7 @@ export default function App() {
 
                     <View style={{ height: 24 }} />
 
-                    <View style={{ flexDirection: "row", justifyContent: "space-evenly", width: "60%" }}>
+                    <View style={styles.iconButtonContainer}>
                         {Platform.OS == "android" ? null : <IconButton logo="apple" signInCallback={signInResponse} />}
 
                         <IconButton logo="google" signInCallback={signInResponse} />
@@ -77,6 +87,10 @@ export default function App() {
                         <IconButton logo="facebook" signInCallback={signInResponse} />
 
                         <IconButton logo="email" signInCallback={signInResponse} />
+                    </View>
+
+                    <View style={{ marginVertical: 24}}>
+                        <Button title="Sign out" onPress={onSignOutPressed} />
                     </View>
 
                     <View style={{ paddingVertical: 24 }}>
@@ -89,6 +103,11 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
+    iconButtonContainer: {
+        flexDirection: "row",
+        justifyContent: "space-evenly",
+        width: "60%",
+    },
     container: {
         flex: 1,
         alignItems: "center",

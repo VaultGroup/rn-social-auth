@@ -18,7 +18,7 @@ type SocialAuthType = {
 
     signOut(token: string): Promise<boolean>
 
-    signOut(token: string, provider: string): Promise<boolean>
+    signOutProvider(token: string, provider: string): Promise<boolean>
 }
 
 const { SocialAuth } = NativeModules
@@ -63,7 +63,7 @@ export async function signOut(token: string, provider?: string): Promise<boolean
             return false
         }
 
-        success = await Caller.signOut(token, provider)
+        success = await Caller.signOutProvider(token, provider)
     } else {
         success = await Caller.signOut(token)
     }
