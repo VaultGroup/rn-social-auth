@@ -25,7 +25,7 @@ const { SocialAuth } = NativeModules
 
 const Caller = SocialAuth as SocialAuthType
 
-export function isProviderInvalid(provider: string): boolean {
+export const isProviderInvalid = (provider: string): boolean => {
     switch (provider) {
         case "google":
             if (Config.googleClientID === undefined || Config.googleClientID.length == 0) {
@@ -55,7 +55,7 @@ export function isProviderInvalid(provider: string): boolean {
     return true
 }
 
-export async function signOut(token: string, provider?: string): Promise<boolean> {
+export const signOut = async (token: string, provider?: string): Promise<boolean> => {
     var success = false
 
     if (provider) {
