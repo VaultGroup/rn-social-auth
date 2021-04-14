@@ -200,34 +200,27 @@ class SocialAuth: NSObject, GIDSignInDelegate, ASAuthorizationControllerDelegate
     
     @available(iOS 13.0, *)
     func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
-        switch authorization.credential {
-            case let credential as ASAuthorizationAppleIDCredential:
+        if let credential = authorization.credential as? ASAuthorizationAppleIDCredential,
+            let token = credential.identityToken,
+            let tokenString = String(data: token, encoding: .utf8)
+        {
                 
-                // Create an account in your system.
-                let userIdentifier = credential.user
-                let firstName = credential.fullName?.givenName
-                let lastName = credential.fullName?.familyName
-                let email = credential.email
-                
-                self.resolveWith(
-                    token: userIdentifier,
-                    firstName: firstName,
-                    lastName: lastName,
-                    email: email,
-                    phone: "",
-                    imageUrl: ""
-                )
-                
-            case let /*passwordCredential*/_ as ASPasswordCredential:
+            let firstName = credential.fullName?.givenName
+            let lastName = credential.fullName?.familyName
+            let email = credential.email
             
-                // Sign in using an existing iCloud Keychain credential.
-//                let username = passwordCredential.user
-//                let password = passwordCredential.password
+            self.resolveWith(
+                token: tokenString,
+                firstName: firstName,
+                lastName: lastName,
+                email: email,
+                phone: "",
+                imageUrl: ""
+            )
                 
-                self.resolveWith(error: nil, orString: "Unsupported")
-                
-            default:
-                break
+        } else {
+
+            self.resolveWith(error: nil, orString: "Unsupported")
         }
     }
     
