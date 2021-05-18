@@ -30,8 +30,11 @@ class SocialAuth: NSObject, GIDSignInDelegate, ASAuthorizationControllerDelegate
         switch provider {
         
             case "apple":
-                // Doesn't look like this is supported?
-                break
+                // Apple Sign In do not support sign out however
+                // resolve this to true as opposed to the
+                // rejecter firing
+                resolver(true)
+                return
                 
             case "google":
                 if googleSignOut() {
