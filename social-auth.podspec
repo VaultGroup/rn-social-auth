@@ -19,5 +19,5 @@ Pod::Spec.new do |s|
 
   s.dependency "React-Core"
   s.dependency "GoogleSignIn", "5.0.2"
-  s.dependency "FBSDKLoginKit"
+  s.dependency "FBSDKLoginKit", "9.1.0"
 end
