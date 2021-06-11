@@ -16,16 +16,16 @@ type SocialAuthType = {
 
     appleSignIn(resolve: (error: string | null, response: SocialAuthResponse | null) => void): Promise<void>
 
-    signOut(): Promise<boolean>
+    signOut(facebookAppID?: string): Promise<boolean>
 
-    signOutProvider(provider: string): Promise<boolean>
+    signOutProvider(appID: string|undefined, provider: string): Promise<boolean>
 }
 
 const { SocialAuth } = NativeModules
 
 const Caller = SocialAuth as SocialAuthType
 
-export const isProviderInvalid = (provider: string): boolean => {
+export const isProviderInvalid = (provider: IdentityProvider): boolean => {
     switch (provider) {
         case "google":
             if (Config.googleClientID === undefined || Config.googleClientID.length == 0) {
@@ -51,11 +51,9 @@ export const isProviderInvalid = (provider: string): boolean => {
                 return false
             }
     }
-
-    return true
 }
 
-export const signOut = async (provider?: string): Promise<boolean> => {
+export const signOut = async (provider?: IdentityProvider): Promise<boolean> => {
     var success = false
 
     if (provider) {
@@ -63,9 +61,23 @@ export const signOut = async (provider?: string): Promise<boolean> => {
             return false
         }
 
-        success = await Caller.signOutProvider(provider)
+        switch (provider) {
+
+            case "apple":
+                success = await Caller.signOutProvider(undefined, provider)
+                break
+
+            case "google":
+                success = await Caller.signOutProvider(Config.googleClientID, provider)
+                break
+
+            case "facebook":
+                success = await Caller.signOutProvider(Config.facebookAppID, provider)
+                break
+        }
+
     } else {
-        success = await Caller.signOut()
+        success = await Caller.signOut(Config.facebookAppID)
     }
 
     return success

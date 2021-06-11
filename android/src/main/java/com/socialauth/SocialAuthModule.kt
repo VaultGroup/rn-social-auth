@@ -212,14 +212,14 @@ class SocialAuthModule : ReactContextBaseJavaModule, ActivityEventListener {
   }
 
   @ReactMethod
-  fun signOut(promise: Promise) {
+  fun signOut(facebookAppID: String, promise: Promise) {
 
     if (googleSignOut()) {
       promise.resolve(true)
       return
     }
 
-    if (facebookSignOut()) {
+    if (facebookSignOut(facebookAppID)) {
       promise.resolve(true)
       return
     }
@@ -228,7 +228,7 @@ class SocialAuthModule : ReactContextBaseJavaModule, ActivityEventListener {
   }
 
   @ReactMethod
-  fun signOutProvider(provider: String, promise: Promise) {
+  fun signOutProvider(appID: String, provider: String, promise: Promise) {
 
     when (provider) {
 
@@ -248,7 +248,7 @@ class SocialAuthModule : ReactContextBaseJavaModule, ActivityEventListener {
       }
 
       "facebook" -> {
-        if (facebookSignOut()) {
+        if (facebookSignOut(appID)) {
           promise.resolve(true)
           return
         }
@@ -268,7 +268,15 @@ class SocialAuthModule : ReactContextBaseJavaModule, ActivityEventListener {
     return false
   }
 
-  fun facebookSignOut(): Boolean {
+  fun facebookSignOut(appID: String): Boolean {
+
+    FacebookSdk.setApplicationId(appID)
+
+    if (!FacebookSdk.isInitialized()) {
+      FacebookSdk.sdkInitialize(reactApplicationContext)
+      FacebookSdk.fullyInitialize()
+    }
+    
     if (AccessToken.isCurrentAccessTokenActive()) {
       LoginManager.getInstance().logOut()
       return true

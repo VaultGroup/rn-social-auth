@@ -8,15 +8,15 @@ class SocialAuth: NSObject, GIDSignInDelegate, ASAuthorizationControllerDelegate
  
     var resolver: RCTResponseSenderBlock?
     
-    @objc(signOut:rejecter:)
-    func signOut(resolver: RCTPromiseResolveBlock, rejecter: RCTPromiseRejectBlock) {
+    @objc(signOut:resolver:rejecter:)
+    func signOut(facebookAppID: String, resolver: RCTPromiseResolveBlock, rejecter: RCTPromiseRejectBlock) {
         
         if googleSignOut() {
             resolver(true)
             return
         }
         
-        if facebookSignOut() {
+        if facebookSignOut(facebookAppID) {
             resolver(true)
             return
         }
@@ -24,8 +24,8 @@ class SocialAuth: NSObject, GIDSignInDelegate, ASAuthorizationControllerDelegate
         rejecter("sign_out_failed", "Unable to sign out. Are you signed in?", nil)
     }
     
-    @objc(signOutProvider:resolver:rejecter:)
-    func signOutProvider(provider: String, resolver: RCTPromiseResolveBlock, rejecter: RCTPromiseRejectBlock) {
+    @objc(signOutProvider:provider:resolver:rejecter:)
+    func signOutProvider(appID: String, provider: String, resolver: RCTPromiseResolveBlock, rejecter: RCTPromiseRejectBlock) {
         
         switch provider {
         
@@ -43,7 +43,7 @@ class SocialAuth: NSObject, GIDSignInDelegate, ASAuthorizationControllerDelegate
                 }
                 
             case "facebook":
-                if facebookSignOut() {
+                if facebookSignOut(appID) {
                     resolver(true)
                     return
                 }
@@ -66,7 +66,12 @@ class SocialAuth: NSObject, GIDSignInDelegate, ASAuthorizationControllerDelegate
         return false
     }
     
-    func facebookSignOut() -> Bool {
+    func facebookSignOut(_ appID: String) -> Bool {
+        
+        FBSDKCoreKit.Settings.appID = appID
+        
+        ApplicationDelegate.initializeSDK(nil)
+        
         if AccessToken.current != nil {
             let loginManager = LoginManager()
             loginManager.logOut()
