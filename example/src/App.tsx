@@ -17,7 +17,7 @@ if (Platform.OS == "android") {
 } else {
     Config.googleClientID = "641945122723-6oqbto3q4hfuedpksehpk9hjvik3ieil.apps.googleusercontent.com"
 }
-Config.facebookAppID = "788977271724922"
+Config.facebookAppID = "1143904939439517"
 
 export default function App() {
 

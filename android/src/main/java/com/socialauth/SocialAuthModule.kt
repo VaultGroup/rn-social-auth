@@ -3,6 +3,7 @@ package com.socialauth
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.telecom.Call
 import android.util.Log
 import android.widget.Toast
 import com.facebook.*
@@ -22,16 +23,11 @@ const val RC_GOOGLE_SIGN_IN = 999
 
 class SocialAuthModule : ReactContextBaseJavaModule, ActivityEventListener {
 
-  private var resolver: Callback? = null
-
-  private lateinit var googleSignInOptions: GoogleSignInOptions
-
-  private var callbackManager: CallbackManager? = null
-
   private val reactContext: ReactApplicationContext
     get() = this.reactApplicationContext
 
-  constructor(reactContext: ReactApplicationContext): super(reactContext) {
+  @Suppress("ConvertSecondaryConstructorToPrimary")
+  constructor(reactContext: ReactApplicationContext) : super(reactContext) {
     reactContext.addActivityEventListener(this)
   }
 
@@ -39,16 +35,29 @@ class SocialAuthModule : ReactContextBaseJavaModule, ActivityEventListener {
     return "SocialAuth"
   }
 
+  /**
+   * Used to call back to the javascript code with
+   * a success or error response
+   */
+  private var resolver: Callback? = null
+
+  /**
+   * Will be called as a response from Facebook sign in
+   */
+  private var callbackManager: CallbackManager? = null
+
+  private val googleSignInOptionsBuilder: GoogleSignInOptions.Builder get() {
+    return GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+      .requestEmail()
+  }
+
   @ReactMethod
   fun googleSignIn(clientID: String, resolve: Callback) {
     this.resolver = resolve
 
-    googleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-      .requestIdToken(clientID)
-      .requestEmail()
-      .build()
+    val options = googleSignInOptionsBuilder.requestIdToken(clientID).build()
+    val intent = GoogleSignIn.getClient(reactContext, options).signInIntent
 
-    val intent = GoogleSignIn.getClient(reactContext, googleSignInOptions).signInIntent
     currentActivity?.startActivityForResult(intent, RC_GOOGLE_SIGN_IN)
   }
 
@@ -86,10 +95,6 @@ class SocialAuthModule : ReactContextBaseJavaModule, ActivityEventListener {
           imageUrl = account.photoUrl?.toString()
         )
 
-        // Force the user to select an account on each log in
-//        GoogleSignIn.getClient(reactContext, googleSignInOptions)
-//          .signOut()
-
       } ?: run {
 
         this.resolveWith(null, "Unable to authenticate with Google")
@@ -106,16 +111,6 @@ class SocialAuthModule : ReactContextBaseJavaModule, ActivityEventListener {
 
   override fun onNewIntent(intent: Intent?) {
     // do nothing?
-  }
-
-  // Example method
-  // See https://reactnative.dev/docs/native-modules-android
-  @ReactMethod
-  fun multiply(a: Int, b: Int, promise: Promise) {
-
-    promise.resolve(a * b)
-
-
   }
 
   @ReactMethod
@@ -214,5 +209,71 @@ class SocialAuthModule : ReactContextBaseJavaModule, ActivityEventListener {
 
   fun resolveWith(error: Exception?, orMessage: String = "Uknown error") {
     this.resolver?.invoke(error?.localizedMessage ?: orMessage, null)
+  }
+
+  @ReactMethod
+  fun signOut(promise: Promise) {
+
+    if (googleSignOut()) {
+      promise.resolve(true)
+      return
+    }
+
+    if (facebookSignOut()) {
+      promise.resolve(true)
+      return
+    }
+
+    promise.reject("sign_out_failed", "Unable to sign out. Are you signed in?")
+  }
+
+  @ReactMethod
+  fun signOutProvider(provider: String, promise: Promise) {
+
+    when (provider) {
+
+      "apple" -> {
+        // Apple Sign In do not support sign out however
+        // resolve this to true as opposed to the
+        // rejecter firing
+        promise.resolve(true)
+        return
+      }
+
+      "google" -> {
+        if (googleSignOut()) {
+          promise.resolve(true)
+          return
+        }
+      }
+
+      "facebook" -> {
+        if (facebookSignOut()) {
+          promise.resolve(true)
+          return
+        }
+      }
+    }
+
+    promise.reject("sign_out_failed", "Unable to sign out of $provider. Are you signed in?")
+  }
+
+  fun googleSignOut(): Boolean {
+    if (GoogleSignIn.getLastSignedInAccount(reactContext) != null) {
+      GoogleSignIn.getClient(reactContext, this.googleSignInOptionsBuilder.build())
+        .signOut()
+      return true
+    }
+
+    return false
+  }
+
+  fun facebookSignOut(): Boolean {
+    if (AccessToken.isCurrentAccessTokenActive()) {
+      LoginManager.getInstance().logOut()
+      return true
+    }
+
+    return false
   }
 }
