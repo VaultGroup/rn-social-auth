@@ -18,7 +18,7 @@ type SocialAuthType = {
 
     signOut(facebookAppID?: string): Promise<boolean>
 
-    signOutProvider(appID: string|undefined, provider: string): Promise<boolean>
+    signOutProvider(appID: string | undefined, provider: string): Promise<boolean>
 }
 
 const { SocialAuth } = NativeModules
@@ -68,11 +68,15 @@ export const signOut = async (provider?: IdentityProvider): Promise<boolean> => 
                 break
 
             case "google":
-                success = await Caller.signOutProvider(Config.googleClientID, provider)
+                if (Config.googleClientID) {
+                    success = await Caller.signOutProvider(Config.googleClientID, provider)
+                }
                 break
 
             case "facebook":
-                success = await Caller.signOutProvider(Config.facebookAppID, provider)
+                if (Config.facebookAppID) {
+                    success = await Caller.signOutProvider(Config.facebookAppID, provider)
+                }
                 break
         }
 
