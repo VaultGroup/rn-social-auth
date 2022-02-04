@@ -8,7 +8,7 @@ export const GenericSignInButton = (props: SignInButtonProps) => {
     if (props.buttonSize == "small") {
         const padding = (props.height ?? 50) / 5
         return (
-            <TouchHandlerView provider="google" onPress={props.onPress} signInCallback={props.signInCallback}>
+            <TouchHandlerView provider="generic" onPress={props.onPress} signInCallback={props.signInCallback}>
                 <View
                     style={{
                         backgroundColor: "white",
