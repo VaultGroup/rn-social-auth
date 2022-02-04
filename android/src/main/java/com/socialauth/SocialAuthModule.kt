@@ -3,20 +3,13 @@ package com.socialauth
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.telecom.Call
-import android.util.Log
-import android.widget.Toast
 import com.facebook.*
-import com.facebook.common.executors.SerialExecutorService
 import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
 import com.facebook.react.bridge.*
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
-import org.json.JSONObject
-import java.lang.Exception
-import java.util.concurrent.Executors
 
 
 const val RC_GOOGLE_SIGN_IN = 999
@@ -122,8 +115,11 @@ class SocialAuthModule : ReactContextBaseJavaModule, ActivityEventListener {
       FacebookSdk.setApplicationId(appID)
 
       if (!FacebookSdk.isInitialized()) {
-        FacebookSdk.sdkInitialize(reactApplicationContext)
-        FacebookSdk.fullyInitialize()
+        FacebookSdk.sdkInitialize(reactApplicationContext) {
+          facebookSignIn(appID, resolve)
+          FacebookSdk.fullyInitialize()
+        }
+        return@runOnUiQueueThread
       }
 
       callbackManager = CallbackManager.Factory.create()
@@ -175,7 +171,6 @@ class SocialAuthModule : ReactContextBaseJavaModule, ActivityEventListener {
 
     }
 
-
     LoginManager.getInstance().logIn(reactContext.currentActivity, arrayListOf("public_profile", "email"))
   }
 
@@ -212,12 +207,15 @@ class SocialAuthModule : ReactContextBaseJavaModule, ActivityEventListener {
       return
     }
 
-    if (facebookSignOut(facebookAppID)) {
-      promise.resolve(true)
-      return
+    facebookSignOut(facebookAppID) {
+      if (it) {
+        promise.resolve(it)
+
+      } else {
+        promise.reject("sign_out_failed", "Unable to sign out. Are you signed in?")
+      }
     }
 
-    promise.reject("sign_out_failed", "Unable to sign out. Are you signed in?")
   }
 
   @ReactMethod
@@ -241,10 +239,10 @@ class SocialAuthModule : ReactContextBaseJavaModule, ActivityEventListener {
       }
 
       "facebook" -> {
-        if (facebookSignOut(appID)) {
-          promise.resolve(true)
-          return
+        facebookSignOut(appID) {
+          promise.resolve(it)
         }
+        return
       }
     }
 
@@ -261,20 +259,23 @@ class SocialAuthModule : ReactContextBaseJavaModule, ActivityEventListener {
     return false
   }
 
-  fun facebookSignOut(appID: String): Boolean {
+  fun facebookSignOut(appID: String, result: (Boolean) -> Unit) {
 
     FacebookSdk.setApplicationId(appID)
 
     if (!FacebookSdk.isInitialized()) {
-      FacebookSdk.sdkInitialize(reactApplicationContext)
-      FacebookSdk.fullyInitialize()
+      FacebookSdk.sdkInitialize(reactApplicationContext) {
+        facebookSignOut(appID, result)
+        FacebookSdk.fullyInitialize()
+      }
+      return
     }
 
     if (AccessToken.isCurrentAccessTokenActive()) {
       LoginManager.getInstance().logOut()
-      return true
+      result(true)
     }
 
-    return false
+    result(false)
   }
 }

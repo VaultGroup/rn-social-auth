@@ -1,10 +1,10 @@
 import React from "react"
 import { TouchableOpacity } from "react-native"
-import type { LogoStyleProps } from "./props"
+import type { SocialSignInButtonProps } from "./props"
 import * as SocialAuth from "../SocialAuth"
 import type { SocialAuthResponse } from "src/SocialAuthResponse"
 
-interface TouchHandlerViewProps extends LogoStyleProps {
+interface TouchHandlerViewProps extends SocialSignInButtonProps {
     onPress?: () => void
     signInCallback?: (error: string | null, response: SocialAuthResponse | null) => void
     children?: JSX.Element | JSX.Element[]
@@ -17,7 +17,7 @@ export const TouchHandlerView = (props: TouchHandlerViewProps) => {
         } else if (props.signInCallback !== undefined) {
             // facebookSignIn(props.signInCallback)
 
-            switch (props.logo) {
+            switch (props.provider) {
                 case "facebook":
                     SocialAuth.facebookSignIn(props.signInCallback)
                     break

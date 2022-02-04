@@ -1,5 +1,5 @@
 import { NativeModules, Platform } from "react-native"
-import { SocialAuthError, SocialAuthErrorCode } from "social-auth"
+import { SocialAuthError, SocialAuthErrorCode } from "react-native-social-auth"
 import { Config } from "./config"
 import type { IdentityProvider, SocialAuthResponse } from "./SocialAuthResponse"
 

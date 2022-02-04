@@ -2,7 +2,7 @@
   "compilerOptions": {
     "baseUrl": "./",
     "paths": {
-      "social-auth": ["./src/index"]
+      "react-native-social-auth": ["./src/index"]
     },
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,

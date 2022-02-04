@@ -103,7 +103,7 @@ No other setup is required for Android
 ## Usage
 
 ```js
-import { Config, AppleButton, FacebookButton, GenericEmailButton, GoogleButton, IconButton } from 'social-auth';
+import { Config, AppleButton, FacebookButton, GenericEmailButton, GoogleButton, IconButton } from 'react-native-social-auth';
 
 //...
 

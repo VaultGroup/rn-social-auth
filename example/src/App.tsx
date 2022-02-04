@@ -3,14 +3,14 @@ import * as React from "react"
 import { StyleSheet, View, Text, Platform, ScrollView, SafeAreaView, Button } from "react-native"
 import {
     Config,
-    AppleButton,
-    FacebookButton,
-    GenericEmailButton,
-    GoogleButton,
-    IconButton,
+    AppleSignInButton,
+    FacebookSignInButton,
+    GenericSignInButton,
+    GoogleSignInButton,
+    SocialSignInButton,
     SocialAuthResponse,
     signOut,
-} from "social-auth"
+} from "react-native-social-auth"
 
 if (Platform.OS == "android") {
     Config.googleClientID = "539083112611-var842hv7fn4sj8q92suirkrrm7nhl5f.apps.googleusercontent.com"
@@ -48,7 +48,7 @@ export default function App() {
         } else {
             return (
                 <View>
-                    <AppleButton signInCallback={signInResponse} />
+                    <AppleSignInButton signInCallback={signInResponse} />
 
                     <View style={{ height: 24 }} />
                 </View>
@@ -70,28 +70,28 @@ export default function App() {
         <SafeAreaView style={{ flex: 1 }}>
             <ScrollView style={{ paddingVertical: 0 }}>
                 <View style={styles.container}>
-                    <GenericEmailButton onPress={() => {}} />
+                    <GenericSignInButton buttonSize="large" onPress={() => {}} />
 
                     <View style={{ height: 24 }} />
 
                     {appleSignInButton()}
 
-                    <GoogleButton signInCallback={signInResponse} style={{ backgroundColor: "red" }} />
+                    <GoogleSignInButton signInCallback={signInResponse} style={{ backgroundColor: "red" }} />
 
                     <View style={{ height: 24 }} />
 
-                    <FacebookButton signInCallback={signInResponse} />
+                    <FacebookSignInButton signInCallback={signInResponse} />
 
                     <View style={{ height: 24 }} />
 
                     <View style={styles.iconButtonContainer}>
-                        {Platform.OS == "android" ? null : <IconButton logo="apple" signInCallback={signInResponse} />}
+                        {Platform.OS == "android" ? null : <SocialSignInButton buttonSize="small" provider="apple" signInCallback={signInResponse} />}
 
-                        <IconButton logo="google" signInCallback={signInResponse} />
+                        <SocialSignInButton buttonSize="small" provider="google" signInCallback={signInResponse} />
 
-                        <IconButton logo="facebook" signInCallback={signInResponse} />
+                        <SocialSignInButton buttonSize="small" provider="facebook" signInCallback={signInResponse} />
 
-                        <IconButton logo="email" signInCallback={signInResponse} />
+                        <SocialSignInButton buttonSize="small" provider="generic" signInCallback={signInResponse} />
                     </View>
 
                     <View style={{ marginVertical: 24}}>
