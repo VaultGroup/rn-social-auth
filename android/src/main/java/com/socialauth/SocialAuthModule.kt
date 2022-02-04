@@ -143,31 +143,24 @@ class SocialAuthModule : ReactContextBaseJavaModule, ActivityEventListener {
               HttpMethod.GET
             )
 
-            task.setCallback { response ->
+            task.callback = GraphRequest.Callback { response ->
+              if (response.error != null) {
 
-              if (response == null) {
-
-                this@SocialAuthModule.resolveWith(null, "Facebook Graph request failed")
-
-              } else if (response.error != null) {
-
-                this@SocialAuthModule.resolveWith(response.error.exception)
+                this@SocialAuthModule.resolveWith(response.error?.exception)
 
               } else {
 
                 this@SocialAuthModule.resolveWith(
                   token = loginResult?.accessToken?.token ?: "",
-                  email = response.jsonObject.optString("email"),
-                  firstName = response.jsonObject.optString("first_name"),
-                  lastName = response.jsonObject.optString("last_name"),
+                  email = response.jsonObject?.optString("email"),
+                  firstName = response.jsonObject?.optString("first_name"),
+                  lastName = response.jsonObject?.optString("last_name"),
                   phone = "",
-                  imageUrl = response.jsonObject.optJSONObject("picture")?.optJSONObject("data")?.optString("url")
+                  imageUrl = response.jsonObject?.optJSONObject("picture")?.optJSONObject("data")?.optString("url")
                 )
 
               }
-
             }
-
             task.executeAsync()
           }
 
@@ -276,7 +269,7 @@ class SocialAuthModule : ReactContextBaseJavaModule, ActivityEventListener {
       FacebookSdk.sdkInitialize(reactApplicationContext)
       FacebookSdk.fullyInitialize()
     }
-    
+
     if (AccessToken.isCurrentAccessTokenActive()) {
       LoginManager.getInstance().logOut()
       return true

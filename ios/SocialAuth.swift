@@ -4,7 +4,7 @@ import FBSDKCoreKit
 import AuthenticationServices
 
 @objc(SocialAuth)
-class SocialAuth: NSObject, GIDSignInDelegate, ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding {
+class SocialAuth: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding {
  
     var resolver: RCTResponseSenderBlock?
     
@@ -56,10 +56,10 @@ class SocialAuth: NSObject, GIDSignInDelegate, ASAuthorizationControllerDelegate
     
     
     func googleSignOut() -> Bool {
-        let gid = GIDSignIn.sharedInstance()
+        let gid = GIDSignIn.sharedInstance
         
-        if gid?.currentUser != nil {
-            gid?.signOut()
+        if gid.currentUser != nil {
+            gid.signOut()
             return true
         }
         
@@ -68,9 +68,9 @@ class SocialAuth: NSObject, GIDSignInDelegate, ASAuthorizationControllerDelegate
     
     func facebookSignOut(_ appID: String) -> Bool {
         
-        FBSDKCoreKit.Settings.appID = appID
+        FBSDKCoreKit.Settings.shared.appID = appID
         
-        ApplicationDelegate.initializeSDK(nil)
+        ApplicationDelegate.shared.initializeSDK()
         
         if AccessToken.current != nil {
             let loginManager = LoginManager()
@@ -84,12 +84,24 @@ class SocialAuth: NSObject, GIDSignInDelegate, ASAuthorizationControllerDelegate
     @objc(googleSignIn:withResolver:)
     func googleSignIn(clientID: String, resolve: RCTResponseSenderBlock?) -> Void {
         self.resolver = resolve
-        
-        let gid = GIDSignIn.sharedInstance()
-        gid?.presentingViewController = UIApplication.shared.keyWindow!.rootViewController!
-        gid?.delegate = self
-        gid?.clientID = clientID
-        gid?.signIn()
+
+        GIDSignIn.sharedInstance.signIn(with: GIDConfiguration(clientID: clientID), presenting: UIApplication.shared.keyWindow!.rootViewController!) { user, error in
+            
+            if error == nil, let credential = user?.authentication, let code = credential.idToken, let profile = user?.profile {
+                
+                self.resolveWith(
+                    token: code,
+                    firstName: profile.givenName ?? "",
+                    lastName: profile.familyName ?? "",
+                    email: profile.email,
+                    phone: "",
+                    imageUrl: profile.imageURL(withDimension: 400)?.absoluteString ?? ""
+                )
+                
+            } else {
+                self.resolveWith(error: error)
+            }
+        }
     }
 
     func resolveWith(token: String?, firstName: String?, lastName: String?, email: String?, phone: String?, imageUrl: String?) {
@@ -109,32 +121,14 @@ class SocialAuth: NSObject, GIDSignInDelegate, ASAuthorizationControllerDelegate
         resolver?([error?.localizedDescription ?? string, NSNull()])
     }
 
-    func sign(_ signIn: GIDSignIn?, didSignInFor user: GIDGoogleUser?, withError error: Error?) {
-
-        if error == nil, let credential = user?.authentication, let code = credential.idToken, let profile = user?.profile {
-            
-            self.resolveWith(
-                token: code,
-                firstName: profile.givenName ?? "",
-                lastName: profile.familyName ?? "",
-                email: profile.email ?? "",
-                phone: "",
-                imageUrl: profile.imageURL(withDimension: 400)?.absoluteString ?? ""
-            )
-
-        } else {
-            self.resolveWith(error: error)
-        }
-    }
-
 
     @objc(facebookSignIn:withResolver:)
     func facebookSignIn(appID: String, resolve: RCTResponseSenderBlock?) -> Void {
         self.resolver = resolve
             
-        FBSDKCoreKit.Settings.appID = appID
+        FBSDKCoreKit.Settings.shared.appID = appID
         
-        ApplicationDelegate.initializeSDK(nil)
+        ApplicationDelegate.shared.initializeSDK()
         
         let loginManager = LoginManager()
         

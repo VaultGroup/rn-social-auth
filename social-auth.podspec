@@ -18,6 +18,6 @@ Pod::Spec.new do |s|
   s.resources = "social-auth/Assets/*"
 
   s.dependency "React-Core"
-  s.dependency "GoogleSignIn", "5.0.2"
-  s.dependency "FBSDKLoginKit", "9.1.0"
+  s.dependency "GoogleSignIn", "6.1.0"
+  s.dependency "FBSDKLoginKit", "12.3.1"
 end
