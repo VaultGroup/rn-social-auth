@@ -116,8 +116,8 @@ class SocialAuthModule : ReactContextBaseJavaModule, ActivityEventListener {
 
       if (!FacebookSdk.isInitialized()) {
         FacebookSdk.sdkInitialize(reactApplicationContext) {
-          facebookSignIn(appID, resolve)
           FacebookSdk.fullyInitialize()
+          facebookSignIn(appID, resolve)
         }
         return@runOnUiQueueThread
       }
@@ -169,9 +169,8 @@ class SocialAuthModule : ReactContextBaseJavaModule, ActivityEventListener {
           }
         })
 
+      LoginManager.getInstance().logIn(reactContext.currentActivity, arrayListOf("public_profile", "email"))
     }
-
-    LoginManager.getInstance().logIn(reactContext.currentActivity, arrayListOf("public_profile", "email"))
   }
 
   fun resolveWith(
@@ -193,10 +192,12 @@ class SocialAuthModule : ReactContextBaseJavaModule, ActivityEventListener {
     )
 
     this.resolver?.invoke(null, result.toMap())
+    this.resolver = null
   }
 
   fun resolveWith(error: Exception?, orMessage: String = "Uknown error") {
     this.resolver?.invoke(error?.localizedMessage ?: orMessage, null)
+    this.resolver = null
   }
 
   @ReactMethod
@@ -265,8 +266,8 @@ class SocialAuthModule : ReactContextBaseJavaModule, ActivityEventListener {
 
     if (!FacebookSdk.isInitialized()) {
       FacebookSdk.sdkInitialize(reactApplicationContext) {
-        facebookSignOut(appID, result)
         FacebookSdk.fullyInitialize()
+        facebookSignOut(appID, result)
       }
       return
     }
@@ -274,8 +275,9 @@ class SocialAuthModule : ReactContextBaseJavaModule, ActivityEventListener {
     if (AccessToken.isCurrentAccessTokenActive()) {
       LoginManager.getInstance().logOut()
       result(true)
-    }
+    } else {
 
-    result(false)
+      result(false)
+    }
   }
 }
