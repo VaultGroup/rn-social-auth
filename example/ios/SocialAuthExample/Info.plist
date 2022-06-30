@@ -30,25 +30,23 @@
 				<string>com.googleusercontent.apps.641945122723-6oqbto3q4hfuedpksehpk9hjvik3ieil</string>
 			</array>
 		</dict>
-    
 		<dict>
-		<key>CFBundleTypeRole</key>
-		<string>Editor</string>
-		<key>CFBundleURLSchemes</key>
-		<array>
-			<string>fb1143904939439517</string>
-		</array>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>fb1143904939439517</string>
+			</array>
 		</dict>
 	</array>
-    
-  <key>LSApplicationQueriesSchemes</key>
-  <array>
-    <string>fbauth2</string>
-  </array>
-
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>fbauth2</string>
+		<string>fbapi</string>
+		<string>fb-messenger-share-api</string>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>1</string>
-  
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>

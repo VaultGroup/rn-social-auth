@@ -1,5 +1,4 @@
-import * as React from "react"
-
+import React, { useState } from "react"
 import { StyleSheet, View, Text, Platform, ScrollView, SafeAreaView, Button } from "react-native"
 import {
     Config,
@@ -20,9 +19,8 @@ if (Platform.OS == "android") {
 Config.facebookAppID = "1143904939439517"
 
 export default function App() {
-
-    const [result, setResult] = React.useState<string | null>()
-    const [response, setResponse] = React.useState<SocialAuthResponse | null>()
+    const [result, setResult] = useState<string | null>()
+    const [response, setResponse] = useState<SocialAuthResponse | null>()
 
     const signInResponse = (_error: any, response: SocialAuthResponse | null) => {
         setResponse(response)
@@ -42,24 +40,10 @@ export default function App() {
         )
     }
 
-    const appleSignInButton = () => {
-        if (Platform.OS == "android") {
-            return null
-        } else {
-            return (
-                <View>
-                    <AppleSignInButton signInCallback={signInResponse} />
-
-                    <View style={{ height: 24 }} />
-                </View>
-            )
-        }
-    }
-
     const onSignOutPressed = async () => {
         let success: boolean
         try {
-            success  = await signOut(response?.identityProvider)
+            success = await signOut(response?.identityProvider)
         } catch (e) {
             success = false
         }
@@ -74,7 +58,12 @@ export default function App() {
 
                     <View style={{ height: 24 }} />
 
-                    {appleSignInButton()}
+                    {Platform.OS == "android" ? null : (
+                        <>
+                            <AppleSignInButton signInCallback={signInResponse} />
+                            <View style={{ height: 24 }} />
+                        </>
+                    )}
 
                     <GoogleSignInButton signInCallback={signInResponse} style={{ backgroundColor: "red" }} />
 
@@ -85,7 +74,9 @@ export default function App() {
                     <View style={{ height: 24 }} />
 
                     <View style={styles.iconButtonContainer}>
-                        {Platform.OS == "android" ? null : <SocialSignInButton buttonSize="small" provider="apple" signInCallback={signInResponse} />}
+                        {Platform.OS == "android" ? null : (
+                            <SocialSignInButton buttonSize="small" provider="apple" signInCallback={signInResponse} />
+                        )}
 
                         <SocialSignInButton buttonSize="small" provider="google" signInCallback={signInResponse} />
 
@@ -94,7 +85,7 @@ export default function App() {
                         <SocialSignInButton buttonSize="small" provider="generic" signInCallback={signInResponse} />
                     </View>
 
-                    <View style={{ marginVertical: 24}}>
+                    <View style={{ marginVertical: 24 }}>
                         <Button title="Sign out" onPress={onSignOutPressed} />
                     </View>
 

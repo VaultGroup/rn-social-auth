@@ -132,6 +132,27 @@ const signInResponse = (response: any) => {
 <IconButton logo="email" signInCallback={signInResponse} />
 ```
 
+## Running the Example Project
+```
+// install the module deps
+npm i
+
+// All further commands from within the example project
+cd example
+
+// install the module into the example project
+npm i ../
+
+// install pods
+npx pod-install
+
+// start the packager (in the example project)
+npm start
+
+// optionally, use the vs code launch script "Attach to packager"
+// to debug JS code
+```
+
 ## Contributing
 
 See the [contributing guide](CONTRIBUTING.md) to learn how to contribute to the repository and the development workflow.
